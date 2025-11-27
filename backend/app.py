@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from pathlib import Path
@@ -16,6 +17,9 @@ TEMPLATES_DIR = BASE_DIR / "templates"
 # Where generated projects will be created: backend/generated/
 GENERATED_DIR = BASE_DIR / "generated"
 GENERATED_DIR.mkdir(parents=True, exist_ok=True)  # make sure it exists
+
+GENERATED_ZIPS_DIR = BASE_DIR / "generated-zips"
+GENERATED_ZIPS_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # ---------- Models ----------
@@ -160,15 +164,49 @@ def scaffold_project(body: ScaffoldRequest):
                 detail=f"Failed to process README template: {e}",
             )
 
-    # 6) Still using a fake zip name for now
-    fake_zip_name = f"{generated_folder_name}.zip"
-    fake_download_url = f"http://localhost:8000/download/{fake_zip_name}"
+    # 6) Create a ZIP file from the generated folder
+    try:
+        # Base path for the zip (without extension)
+        zip_base_path = GENERATED_ZIPS_DIR / generated_folder_name
 
+        # This creates zip_base_path + ".zip"
+        shutil.make_archive(
+            base_name=str(zip_base_path),
+            format="zip",
+            root_dir=target_dir,
+        )
+
+        zip_filename = f"{generated_folder_name}.zip"
+        download_url = f"http://localhost:8000/download/{zip_filename}"
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to create zip archive: {e}",
+        )
+
+    # 7) Return response with REAL zip download URL
     return ScaffoldResponse(
-        message=f"Project folder created at {target_dir}",
+        message=f"Project folder created and zipped at {zip_filename}",
         projectName=body.projectName,
         stackId=body.stackId,
-        downloadUrl=fake_download_url,
+        downloadUrl=download_url,
+    )
+
+@app.get("/download/{zip_name}")
+def download_project(zip_name: str):
+    """
+    Serves a generated zip file from the generatedZips directory.
+    Example: /download/my-app-20251127-044610.zip
+    """
+    zip_path = GENERATED_ZIPS_DIR / zip_name
+
+    if not zip_path.exists() or not zip_path.is_file():
+        raise HTTPException(status_code=404, detail="Zip file not found")
+
+    return FileResponse(
+        path=zip_path,
+        media_type="application/zip",
+        filename=zip_name,
     )
 
 

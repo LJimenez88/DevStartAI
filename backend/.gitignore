@@ -9,4 +9,4 @@ venv/
 
 #temp ignores for testing purposes
 generated/*
-generated/.gitkeep
+generated-zips/*
