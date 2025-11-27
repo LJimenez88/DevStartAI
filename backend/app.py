@@ -1,6 +1,13 @@
 from fastapi import FastAPI
+from pydantic import BaseModel #used to autogenerate schemas
+from typing import List
 
 app = FastAPI()
+
+class Stack(BaseModel):#class for the /stacks API
+    id:str
+    label:str
+    description:str
 
 @app.get("/")
 def home():
@@ -13,21 +20,21 @@ def health():
 @app.get("/stacks")
 def list_stacks():
     stacks = [
-        {
-            "id": "fastapi-postgres-docker",
-            "label": "FastAPI + Postgres + Docker",
-            "description": "Backend-only stack with REST API, Postgres, Docker Compose.",
-        },
-        {
-            "id": "express-mongo-docker",
-            "label": "Express + Mongo + Docker",
-            "description": "Node/Express API with MongoDB and Docker Compose.",
-        },
-        {
-            "id": "react-spa",
-            "label": "React SPA",
-            "description": "Client-side React app with Vite.",
-        },
+        Stack(
+            id="fastapi-postgres-docker",
+            label="FastAPI + Postgres + Docker",
+            description="Backend-only stack with REST API, Postgres, Docker Compose.",
+        ),
+        Stack(
+            id="express-mongo-docker",
+            label="Express + Mongo + Docker",
+            description="Node/Express API with Mongo and Docker Compose.",
+        ),
+        Stack(
+            id="react-spa",
+            label="React SPA",
+            description="Client-side React app with Vite.",
+        ),
     ]
     return stacks
 
