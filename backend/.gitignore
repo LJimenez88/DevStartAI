@@ -6,3 +6,7 @@ __pycache__/
 # Virtual environments
 venv/
 *.env
+
+#temp ignores for testing purposes
+generated/*
+generated/.gitkeep
