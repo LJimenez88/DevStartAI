@@ -5,14 +5,17 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 from pathlib import Path
 from datetime import datetime
+from dotenv import load_dotenv 
 import shutil
+import os
+
+load_dotenv()
 
 app = FastAPI()
 
 # Allow frontend (Vite) to call this API from the browser
-origins = [
-    "http://localhost:5173",  # Vite dev server
-]
+origins_env = os.getenv("ALLOWED_ORIGINS", "")
+origins = [origin.strip() for origin in origins_env.split(",") if origin.strip()]
 
 app.add_middleware(
     CORSMiddleware,
