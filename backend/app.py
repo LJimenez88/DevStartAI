@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from pathlib import Path
@@ -7,6 +8,19 @@ from datetime import datetime
 import shutil
 
 app = FastAPI()
+
+# Allow frontend (Vite) to call this API from the browser
+origins = [
+    "http://localhost:5173",  # Vite dev server
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],   # allow all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],   # allow all headers
+)
 
 # Base directory: backend/
 BASE_DIR = Path(__file__).resolve().parent
