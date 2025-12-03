@@ -61,6 +61,9 @@ class ScaffoldRequest(BaseModel):
     includeAuth: bool = False
     includeCI: bool = False
 
+    # Allowed values: "none", "postgres", "sqlite"
+    dbEngine: str = "none"
+
 # -------------------------------------------------------------
 # Response model for /scaffold
 # This describes what our API will return back to the frontend.
@@ -183,6 +186,13 @@ def scaffold_project(body: ScaffoldRequest):
                 copy_addon("auth")
             if body.includeCI:
                 copy_addon("ci")
+
+            #database engine add-ons
+            if body.dbEngine == "postgres":
+                copy_addon("db-postgres")
+            elif body.dbEngine == "sqlite":
+                copy_addon("db-sqlite")
+            # If "none", do nothing.
 
         else:
             # Fallback for stacks that don't use base/addons yet
