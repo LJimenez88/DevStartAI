@@ -57,7 +57,7 @@ class ScaffoldRequest(BaseModel):
     stackId: str
 
     # Optional features the user can toggle in the UI
-    includeDocker: bool = True
+    includeDocker: bool = False
     includeAuth: bool = False
     includeCI: bool = False
 
@@ -193,6 +193,16 @@ def scaffold_project(body: ScaffoldRequest):
             status_code=500,
             detail=f"Failed to copy template: {e}",
         )
+    
+    env_example = template_dir / ".env.example"
+    if env_example.exists():
+        try:
+            shutil.copy2(env_example, target_dir / ".env.example")
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to copy env file: {e}",
+            )
 
     # 5) Replace {{PROJECT_NAME}} in README_TEMPLATE.md inside the NEW folder
     readme_template = target_dir / "README_TEMPLATE.md"
