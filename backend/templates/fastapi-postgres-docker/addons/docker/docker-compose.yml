@@ -3,22 +3,29 @@ version: "3.9"
 services:
   api:
     build: .
+    container_name: devstart-api
     ports:
       - "8000:8000"
+    # Load env vars from .env (generated project root)
+    env_file:
+      - .env
     environment:
-      # Example DB env variables (user can wire these up later)
+      # Default DATABASE_URL (can be overridden in .env)
+      # Inside Docker, "db" is the hostname of the Postgres service below.
       - DATABASE_URL=postgresql://user:password@db:5432/app_db
     depends_on:
       - db
 
   db:
     image: postgres:16
+    container_name: devstart-db
     restart: always
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: app_db
     ports:
+      # Optional: expose Postgres to the host (good for local dev / DBeaver)
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
