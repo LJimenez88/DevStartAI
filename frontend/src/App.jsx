@@ -11,6 +11,8 @@ function App() {
   const [includeDocker, setIncludeDocker] = useState(false);
   const [includeAuth, setIncludeAuth] = useState(false);
   const [includeCI, setIncludeCI] = useState(false);
+  const [dbEngine, setDbEngine] = useState("none");
+
 
   // Data from backend
   const [stacks, setStacks] = useState([]);
@@ -77,6 +79,7 @@ function App() {
         includeDocker,
         includeAuth,
         includeCI,
+        dbEngine, 
       };
 
       const res = await fetch(`${API_BASE_URL}/scaffold`, {
@@ -160,6 +163,18 @@ function App() {
           </div>
 
           {/* Options */}
+          <div>
+            <p className="text-sm font-medium mb-1">Database (optional)</p>
+            <select
+              value={dbEngine}
+              onChange={(e) => setDbEngine(e.target.value)}
+              className="w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+            >
+              <option value="none">No database (just in-memory)</option>
+              <option value="postgres">Postgres (via DATABASE_URL)</option>
+              <option value="sqlite">SQLite (local file)</option>
+            </select>
+          </div>
           <div>
             <p className="text-sm font-medium mb-1">Options</p>
             <div className="grid grid-cols-3 gap-2 text-xs">
