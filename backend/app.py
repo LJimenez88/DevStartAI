@@ -92,9 +92,9 @@ class Stack(BaseModel):  # class for the /stacks API
 
 AVAILABLE_STACKS: List[Stack] = [
     Stack(
-        id="fastapi-postgres-docker",
-        label="FastAPI + Postgres + Docker",
-        description="Backend-only stack with REST API, Postgres, Docker Compose.",
+        id="fastapi-postgres-docker", #reminder to fix the ID for later
+        label="FastAPI API Starter",
+        description="FastAPI starter with example routes and Postgres-ready config. Optional Addons.",
     ),
     Stack(
         id="express-mongo-docker",
@@ -132,6 +132,7 @@ def scaffold_project(body: ScaffoldRequest):
     Accepts a ScaffoldRequest with project configuration.
     - Validates the stackId
     - Copies the chosen template into backend/generated/
+    - Optionally includes Docker/Auth/CI add-ons
     - Replaces {{PROJECT_NAME}} in the README template
     """
 
@@ -148,6 +149,10 @@ def scaffold_project(body: ScaffoldRequest):
             detail=f"Template folder not found for stackId='{body.stackId}'",
         )
 
+    # NEW: base + addons layout
+    base_dir = template_dir / "base"
+    addons_dir = template_dir / "addons"
+
     # 3) Build a unique folder name in generated/
     safe_name = body.projectName.replace(" ", "-").lower()
     timestamp = datetime.utcnow().strftime("%Y%m%d-%H%M%S")
@@ -155,8 +160,34 @@ def scaffold_project(body: ScaffoldRequest):
     target_dir = GENERATED_DIR / generated_folder_name
 
     try:
-        # 4) Copy the entire template folder into generated/
-        shutil.copytree(template_dir, target_dir)
+        if base_dir.exists():
+            # 4a) Copy only the base template
+            shutil.copytree(base_dir, target_dir)
+
+            # Helper to copy an addon folder into target_dir
+            def copy_addon(name: str):
+                src = addons_dir / name
+                if not src.exists():
+                    return
+                for item in src.rglob("*"):
+                    if item.is_file():
+                        rel_path = item.relative_to(src)
+                        dest = target_dir / rel_path
+                        dest.parent.mkdir(parents=True, exist_ok=True)
+                        shutil.copy2(item, dest)
+
+            # 4b) Conditionally add extras
+            if body.includeDocker:
+                copy_addon("docker")
+            if body.includeAuth:
+                copy_addon("auth")
+            if body.includeCI:
+                copy_addon("ci")
+
+        else:
+            # Fallback for stacks that don't use base/addons yet
+            shutil.copytree(template_dir, target_dir)
+
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -172,8 +203,6 @@ def scaffold_project(body: ScaffoldRequest):
 
             readme_output = target_dir / "README.md"
             readme_output.write_text(content, encoding="utf-8")
-
-            # Delete the template version so only README.md remains
             readme_template.unlink()
         except Exception as e:
             raise HTTPException(
@@ -183,16 +212,12 @@ def scaffold_project(body: ScaffoldRequest):
 
     # 6) Create a ZIP file from the generated folder
     try:
-        # Base path for the zip (without extension)
         zip_base_path = GENERATED_ZIPS_DIR / generated_folder_name
-
-        # This creates zip_base_path + ".zip"
         shutil.make_archive(
             base_name=str(zip_base_path),
             format="zip",
             root_dir=target_dir,
         )
-
         zip_filename = f"{generated_folder_name}.zip"
         download_url = f"http://localhost:8000/download/{zip_filename}"
     except Exception as e:
