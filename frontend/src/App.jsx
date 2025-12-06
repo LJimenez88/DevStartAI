@@ -173,6 +173,7 @@ function App() {
               <option value="none">No database (just in-memory)</option>
               <option value="postgres">Postgres (via DATABASE_URL)</option>
               <option value="sqlite">SQLite (local file)</option>
+              <option value="mongo">MongoDB</option>
             </select>
           </div>
           <div>
