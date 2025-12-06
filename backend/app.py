@@ -221,7 +221,12 @@ def scaffold_project(body: ScaffoldRequest):
 
             # 4b) Conditionally add extras
             if body.includeDocker:
-                copy_addon("docker")
+                if body.dbEngine == "postgres":
+                    copy_addon("docker-postgres")
+                elif body.dbEngine == "sqlite":
+                    copy_addon("docker-sqlite")
+                else:  # "none"
+                    copy_addon("docker-api-only")
             if body.includeAuth:
                 copy_addon("auth")
             if body.includeCI:
