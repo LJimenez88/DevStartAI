@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { connectMongo } = require("../db/mongo");
+const { connectMongo } = require("../db");
 const Item = require("../models/item");
 
 /**
