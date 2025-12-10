@@ -11,8 +11,15 @@ const app = express();
 // Try to load DB helper if a db-* addon was copied
 let db = null;
 try {
-  db = require("./db"); // e.g. from addons/db-mongo/src/db/index.js
+  db = require("./db"); // e.g. from addons/db-{name_of_db}/src/db/index.js
   console.log("DB helper loaded.");
+
+  // Call initDb() on startup so tables are created
+  if (typeof db.initDb === "function") {
+    db.initDb()
+      .then(() => console.log("Postgres tables initialized"))
+      .catch((err) => console.error("DB init failed:", err));
+  }
 } catch (err) {
   console.log("No DB helper found – running without DB health.");
 }
@@ -26,14 +33,14 @@ app.use(morgan("dev"));
 app.use("/health", healthRouter);
 app.use("/items", itemsRouter);
 
-// Try to mount Mongo routes if the files exist.
+// Try to mount db routes if the files exist.
 // If the addon wasn't selected, this require will fail and we just ignore it.
 try {
-  const mongoItemsRouter = require("./routes/items-db");
-  app.use("/mongo/items", mongoItemsRouter);
-  console.log("Mongo routes mounted at /mongo/items");
+  const dbItemsRouter = require("./routes/items-db");
+  app.use("/db/items", dbItemsRouter);
+  console.log("DB routes mounted at /db/items");
 } catch (err) {
-  console.log("No Mongo items routes found (this is fine if dbEngine is not mongo).");
+  console.log("No DB items routes found.");
 }
 
 // Optional DB health route
