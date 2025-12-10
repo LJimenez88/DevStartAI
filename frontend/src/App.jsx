@@ -4,6 +4,27 @@ import { useEffect, useState } from "react";
 // and fall back to localhost if it's missing
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
+
+const ALL_DB_OPTIONS = [
+  { value: "none",     label: "No database (just in-memory)" },
+  { value: "postgres", label: "Postgres (via DATABASE_URL)" },
+  { value: "sqlite",   label: "SQLite (local file)" },
+  { value: "mongo",    label: "MongoDB" },
+];
+
+function getDbOptionsForStack(stackId) {
+  // No stack yet? show everything
+  if (!stackId) return ALL_DB_OPTIONS;
+
+  // Any Express backend: hide SQLite
+  if (stackId.startsWith("express")) {
+    return ALL_DB_OPTIONS.filter((opt) => opt.value !== "sqlite");
+  }
+
+  // FastAPI or anything else: allow all
+  return ALL_DB_OPTIONS;
+}
+
 function App() {
   // Form state
   const [projectName, setProjectName] = useState("");
@@ -52,6 +73,18 @@ function App() {
 
     fetchStacks();
   }, []);
+
+    // Keep dbEngine valid when stack changes
+  useEffect(() => {
+    const options = getDbOptionsForStack(stackId);
+    const validValues = options.map((o) => o.value);
+
+    // If current dbEngine isn't allowed anymore (e.g. sqlite on Express),
+    // reset to the first valid option.
+    if (!validValues.includes(dbEngine)) {
+      setDbEngine(validValues[0] ?? "none");
+    }
+  }, [stackId, dbEngine]);
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -163,17 +196,18 @@ function App() {
           </div>
 
           {/* Options */}
-          <div>
+           <div>
             <p className="text-sm font-medium mb-1">Database (optional)</p>
             <select
               value={dbEngine}
               onChange={(e) => setDbEngine(e.target.value)}
               className="w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
             >
-              <option value="none">No database (just in-memory)</option>
-              <option value="postgres">Postgres (via DATABASE_URL)</option>
-              <option value="sqlite">SQLite (local file)</option>
-              <option value="mongo">MongoDB</option>
+              {getDbOptionsForStack(stackId).map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
             </select>
           </div>
           <div>
