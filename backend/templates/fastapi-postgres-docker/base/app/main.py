@@ -48,7 +48,6 @@ class Item(ItemBase):
 
 # ---------- Fake in-memory 'database' ----------
 
-# In a real app you would replace this with Postgres queries.
 FAKE_DB: List[Item] = []
 
 
@@ -76,7 +75,7 @@ def list_items():
     List all items.
 
     TODO:
-    - Replace this with a SELECT query from Postgres.
+    - Replace this with a SELECT query.
     """
     return FAKE_DB
 
@@ -87,7 +86,7 @@ def create_item(payload: ItemCreate):
     Create a new item.
 
     TODO:
-    - Replace this with an INSERT query into Postgres.
+    - Replace this with an INSERT query.
     """
     new_id = len(FAKE_DB) + 1
     item = Item(id=new_id, **payload.dict())
@@ -140,3 +139,22 @@ def delete_item(item_id: int):
             return
 
     raise HTTPException(status_code=404, detail="Item not found")
+
+
+# ---------- OPTIONAL: mount DB-backed routes if present ----------
+
+# This works for ANY DB addon (MySQL, Postgres, SQLite, Mongo),
+# as long as it ships `app/db.py` and `app/routes_db_items.py`.
+try:
+    from app import db as db_module
+
+    if hasattr(db_module, "init_db"):
+        print("Running init_db() for DB addon...")
+        db_module.init_db()
+        print("Database tables initialized")
+
+    from app.routes_db_items import router as db_items_router
+    app.include_router(db_items_router)
+    print("✔ DB-backed routes mounted")
+except ImportError as e:
+    print(f"ℹ No DB addon found. Running with in-memory items only. ({e})")
