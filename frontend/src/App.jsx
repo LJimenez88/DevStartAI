@@ -10,6 +10,7 @@ const ALL_DB_OPTIONS = [
   { value: "postgres", label: "Postgres (via DATABASE_URL)" },
   { value: "sqlite",   label: "SQLite (local file)" },
   { value: "mongo",    label: "MongoDB" },
+  {value: "mysql",     label: "MySQL"}
 ];
 
 function getDbOptionsForStack(stackId) {

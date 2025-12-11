@@ -62,7 +62,7 @@ class ScaffoldRequest(BaseModel):
     includeCI: bool = False
 
     # Allowed values: "none", "postgres", "sqlite"
-    dbEngine: Literal["none", "postgres", "sqlite", "mongo"] = "none"
+    dbEngine: Literal["none", "mysql" , "postgres", "sqlite", "mongo"] = "none"
 
 # -------------------------------------------------------------
 # Response model for /scaffold
@@ -203,6 +203,18 @@ def build_env_content(db_engine: str, use_docker: bool, stack_id: str) -> str:
             lines.append("MONGO_DB_NAME=app_db")
             lines.append("")
 
+        # MySQL
+        elif db_engine == "mysql":
+            lines.append("# Database configuration (MySQL)")
+            if use_docker:
+                lines.append("# docker-compose: MySQL runs as service `db`.")
+                db_url = "mysql+pymysql://app_user:app_password@mysql-db:3306/app_db"
+            else:
+                lines.append("# Local MySQL instance on your machine.")
+                db_url = "mysql+pymysql://app_user:app_password@localhost:3306/app_db" 
+            lines.append(f"DATABASE_URL={db_url}")
+            lines.append("")
+
         #none
         else:
             lines.append("# No DATABASE_URL set.")
@@ -291,6 +303,8 @@ def scaffold_project(body: ScaffoldRequest):
                     copy_addon("docker-sqlite")
                 elif body.dbEngine == "mongo":
                     copy_addon("docker-mongo")
+                elif body.dbEngine == "mysql":
+                    copy_addon("docker-mysql")
                 else:  # "none"
                     copy_addon("docker-api-only")
             if body.includeAuth:
@@ -305,6 +319,8 @@ def scaffold_project(body: ScaffoldRequest):
                 copy_addon("db-sqlite")
             elif body.dbEngine == "mongo":
                 copy_addon("db-mongo")
+            elif body.dbEngine == "mysql":
+                    copy_addon("db-mysql")
             # If "none", do nothing.
 
         else:
