@@ -62,7 +62,8 @@ class ScaffoldRequest(BaseModel):
     includeCI: bool = False
 
     # Allowed values: "none", "postgres", "sqlite"
-    dbEngine: Literal["none", "mysql" , "postgres", "sqlite", "mongo"] = "none"
+    #SQLite will be added here later when i get it to workinging I need to run it in Visual Studio
+    dbEngine: Literal["none", "mysql" , "postgres", "mongo"] = "none"
 
 # -------------------------------------------------------------
 # Response model for /scaffold
@@ -140,11 +141,12 @@ def build_env_content(db_engine: str, use_docker: bool, stack_id: str) -> str:
             lines.append("")
 
         # sqlite for Express
-        elif db_engine == "sqlite":
-            lines.append("# SQLite configuration (Express)")
-            lines.append("DB_ENGINE=sqlite")
-            lines.append("SQLITE_DB_PATH=./data/db.sqlite")
-            lines.append("")
+        #Will uncomment it once we get it working
+        #elif db_engine == "sqlite":
+            #lines.append("# SQLite configuration (Express)")
+            #lines.append("DB_ENGINE=sqlite")
+            #lines.append("SQLITE_DB_PATH=./data/db.sqlite")
+            #lines.append("")
 
         # mongo for Express
         elif db_engine == "mongo":
@@ -184,11 +186,12 @@ def build_env_content(db_engine: str, use_docker: bool, stack_id: str) -> str:
             lines.append("")
 
         #sqlite
-        elif db_engine == "sqlite":
-            lines.append("# Database configuration (SQLite)")
-            lines.append("# No external DB required; uses local file `app.db`.")
-            lines.append("DATABASE_URL=sqlite+aiosqlite:///./app.db")
-            lines.append("")
+        #Will uncomment it once I get it working 
+        #elif db_engine == "sqlite":
+            #lines.append("# Database configuration (SQLite)")
+            #lines.append("# No external DB required; uses local file `app.db`.")
+            #lines.append("DATABASE_URL=sqlite+aiosqlite:///./app.db")
+            #lines.append("")
 
         #mongo
         elif db_engine == "mongo":
@@ -299,8 +302,8 @@ def scaffold_project(body: ScaffoldRequest):
             if body.includeDocker:
                 if body.dbEngine == "postgres":
                     copy_addon("docker-postgres")
-                elif body.dbEngine == "sqlite":
-                    copy_addon("docker-sqlite")
+                #elif body.dbEngine == "sqlite":
+                    #copy_addon("docker-sqlite")
                 elif body.dbEngine == "mongo":
                     copy_addon("docker-mongo")
                 elif body.dbEngine == "mysql":
@@ -315,8 +318,8 @@ def scaffold_project(body: ScaffoldRequest):
             #database engine add-ons
             if body.dbEngine == "postgres":
                 copy_addon("db-postgres")
-            elif body.dbEngine == "sqlite":
-                copy_addon("db-sqlite")
+            #elif body.dbEngine == "sqlite":
+                #copy_addon("db-sqlite")
             elif body.dbEngine == "mongo":
                 copy_addon("db-mongo")
             elif body.dbEngine == "mysql":

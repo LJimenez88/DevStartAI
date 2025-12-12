@@ -8,7 +8,8 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000
 const ALL_DB_OPTIONS = [
   { value: "none",     label: "No database (just in-memory)" },
   { value: "postgres", label: "Postgres (via DATABASE_URL)" },
-  { value: "sqlite",   label: "SQLite (local file)" },
+  //SQLite will be reactivated once I figure out how to make it work
+  //{ value: "sqlite",   label: "SQLite (local file)" },
   { value: "mongo",    label: "MongoDB" },
   {value: "mysql",     label: "MySQL"}
 ];
@@ -18,9 +19,10 @@ function getDbOptionsForStack(stackId) {
   if (!stackId) return ALL_DB_OPTIONS;
 
   // Any Express backend: hide SQLite
-  if (stackId.startsWith("express")) {
+  //May use this once SQLite is up and running 
+  /*if (stackId.startsWith("express")) {
     return ALL_DB_OPTIONS.filter((opt) => opt.value !== "sqlite");
-  }
+  }*/
 
   // FastAPI or anything else: allow all
   return ALL_DB_OPTIONS;
