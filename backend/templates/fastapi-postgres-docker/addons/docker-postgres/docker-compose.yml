@@ -1,26 +1,28 @@
-version: "3.9"
-
 services:
   api:
     build: .
-    ports:
-      - "8000:8000"
+    container_name: fastapi-postgres-api
     env_file:
       - .env
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    ports:
+      - "8000:8000"
     depends_on:
-      - db
+      - postgres-db
 
-  db:
+  postgres-db:
     image: postgres:16
+    container_name: fastapi-postgres-db
     restart: always
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: app_db
+      POSTGRES_DB: ${POSTGRES_DB:-app_db}
+      POSTGRES_USER: ${POSTGRES_USER:-app_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app_password}
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  pgdata:
+  postgres_data:

@@ -5,3 +5,4 @@ python-dotenv
 cryptography
 sqlalchemy>=2.0.0
 pymysql>=1.1.0
+psycopg2-binary>=2.9

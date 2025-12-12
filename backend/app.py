@@ -176,10 +176,10 @@ def build_env_content(db_engine: str, use_docker: bool, stack_id: str) -> str:
             lines.append("# Database configuration (PostgreSQL)")
             if use_docker:
                 lines.append("# docker-compose: Postgres runs as service `db`.")
-                db_url = "postgresql+asyncpg://user:password@db:5432/app_db"
+                db_url = "postgresql+psycopg2://app_user:app_password@postgres-db:5432/app_db"
             else:
                 lines.append("# Local Postgres instance on your machine.")
-                db_url = "postgresql+asyncpg://user:password@localhost:5432/app_db"
+                db_url = "postgresql+psycopg2://app_user:app_password@postgres-db:5432/app_db"
             lines.append(f"DATABASE_URL={db_url}")
             lines.append("")
 
