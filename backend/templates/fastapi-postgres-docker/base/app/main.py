@@ -155,6 +155,6 @@ try:
 
     from app.routes_db_items import router as db_items_router
     app.include_router(db_items_router)
-    print("✔ DB-backed routes mounted")
+    print("DB-backed routes mounted")
 except ImportError as e:
-    print(f"ℹ No DB addon found. Running with in-memory items only. ({e})")
+    print(f"No DB addon found. Running with in-memory items only. ({e})")
