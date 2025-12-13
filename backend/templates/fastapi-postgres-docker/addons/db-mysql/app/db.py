@@ -14,6 +14,8 @@ from sqlalchemy.exc import OperationalError
 #
 # In Docker, "mysql-db" will be the service name for MySQL.
 # Locally you can use "localhost" instead.
+#URI/URL and DBname information has to be in env file.
+#This was left here as a fall back so you will need to update this on your end
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
     "mysql+pymysql://app_user:app_password@mysql-db:3306/app_db",
@@ -61,9 +63,9 @@ def init_db(max_retries: int = 10, delay_seconds: float = 3.0) -> None:
             print("✔ Database tables initialized")
             return
         except OperationalError as e:
-            print(f"⚠️  DB not ready yet: {e}")
+            print(f"DB not ready yet: {e}")
             if attempt == max_retries:
-                print("❌ Giving up after max retries")
+                print("Giving up after max retries")
                 raise
             time.sleep(delay_seconds)
 
