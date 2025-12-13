@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 // Read from .env (VITE_API_BASE_URL=http://localhost:8000)
 // and fall back to localhost if it's missing
+//This information needs to be in the env file this was added as a fallback & or testing purposes
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 

@@ -9,6 +9,8 @@ let pool;
 function getPool() {
   if (pool) return pool;
 
+  /*This type of information needs to live in the env file it was placed here
+    as a fallback for testing purposes*/
   const host = process.env.DB_HOST || "localhost";
   const port = Number(process.env.DB_PORT || "5432");
   const database = process.env.DB_NAME || "app_db";

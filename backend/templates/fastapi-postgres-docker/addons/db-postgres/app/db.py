@@ -4,6 +4,8 @@ from sqlalchemy import Column, Integer, String, Text, create_engine, text
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
+#URI and DBname information has to be in env file.
+#This was left here as a fall back so you will need to update this on your end
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
     "postgresql+psycopg2://app_user:app_password@postgres-db:5432/app_db",
