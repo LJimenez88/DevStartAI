@@ -1,7 +1,7 @@
 services:
   api:
     build: .
-    container_name: fastapi-mysql-api
+    container_name: fastapi-devai-api
     env_file:
       - .env
     environment:
@@ -13,7 +13,7 @@ services:
 
   mysql-db:
     image: mysql:8
-    container_name: fastapi-mysql-db
+    container_name: fastapi-devai-db
     restart: always
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-app_db}
