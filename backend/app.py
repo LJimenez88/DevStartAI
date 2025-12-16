@@ -96,19 +96,14 @@ class Stack(BaseModel):  # class for the /stacks API
 
 AVAILABLE_STACKS: List[Stack] = [
     Stack(
-        id="fastapi-postgres-docker",  # reminder to align with folder name
-        label="FastAPI API Starter",
-        description="FastAPI starter with example routes and Postgres-ready config. Optional addons.",
+        id="fastapi",  # reminder to align with folder name
+        label="FastAPI",
+        description="Python FastAPI backend with optional DB, Docker, and addons.",
     ),
     Stack(
-        id="express-mongo-docker",
-        label="Express + Mongo + Docker",
-        description="Node/Express API with Mongo and Docker Compose.",
-    ),
-    Stack(
-        id="react-spa",
-        label="React SPA",
-        description="Client-side React app with Vite.",
+        id="express",
+        label="Express API",
+        description="Node.js Express backend with optional DB, Docker, and addons.",
     ),
 ]
 
@@ -127,7 +122,7 @@ def build_env_content(db_engine: str, use_docker: bool, stack_id: str) -> str:
     # --------------------------------------------------
     # EXPRESS STACKS
     # --------------------------------------------------
-    if stack_id == "express-mongo-docker":
+    if stack_id == "express":
         # postgres for Express
         if db_engine == "postgres":
             lines.append("# PostgreSQL configuration (Express)")
@@ -189,11 +184,11 @@ def build_env_content(db_engine: str, use_docker: bool, stack_id: str) -> str:
         if db_engine == "postgres":
             lines.append("# Database configuration (PostgreSQL)")
             if use_docker:
-                lines.append("# docker-compose: Postgres runs as service `db`.")
+                lines.append("# docker-compose: Postgres runs as service `postgres-db`.")
                 db_url = "postgresql+psycopg2://app_user:app_password@postgres-db:5432/app_db"
             else:
                 lines.append("# Local Postgres instance on your machine.")
-                db_url = "postgresql+psycopg2://app_user:app_password@postgres-db:5432/app_db"
+                db_url = "postgresql+psycopg2://app_user:app_password@localhost:5432/app_db"
             lines.append(f"DATABASE_URL={db_url}")
             lines.append("")
 
@@ -222,7 +217,7 @@ def build_env_content(db_engine: str, use_docker: bool, stack_id: str) -> str:
         elif db_engine == "mysql":
             lines.append("# Database configuration (MySQL)")
             if use_docker:
-                lines.append("# docker-compose: MySQL runs as service `db`.")
+                lines.append("# docker-compose: MySQL runs as service `mysql-db`.")
                 db_url = "mysql+pymysql://app_user:app_password@mysql-db:3306/app_db"
             else:
                 lines.append("# Local MySQL instance on your machine.")
