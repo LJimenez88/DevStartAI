@@ -17,7 +17,7 @@ try {
   // Call initDb() on startup so tables are created
   if (typeof db.initDb === "function") {
     db.initDb()
-      .then(() => console.log("Postgres tables initialized"))
+      .then(() => console.log("DB tables initialized"))
       .catch((err) => console.error("DB init failed:", err));
   }
 } catch (err) {

@@ -5,6 +5,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 import os
 
+#URI and DBname information has to be in env file.
+#This was left here as a fall back so you will need to update this on your end
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "app_db")
 
