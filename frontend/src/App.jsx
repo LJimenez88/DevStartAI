@@ -143,6 +143,20 @@ function App() {
     }
   };
 
+  const resetForm = () => {
+      setProjectName("");
+      setStackId("");
+
+      setIncludeDocker(false);
+      setIncludeAuth(false);
+      setIncludeCI(false);
+      setDbEngine("none");
+
+      setError("");
+      setDownloadUrl("");
+    };
+
+
   // Simple UI
   return (
     <div className="min-h-screen bg-slate-900 text-gray-100 flex items-center justify-center p-6">
@@ -279,6 +293,9 @@ function App() {
               href={downloadUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                setTimeout(resetForm, 0);
+              }}
               className="inline-flex items-center gap-2 rounded-md bg-sky-500 px-4 py-2 text-xs font-medium text-slate-950 hover:bg-sky-400 transition-colors"
             >
               Download ZIP
