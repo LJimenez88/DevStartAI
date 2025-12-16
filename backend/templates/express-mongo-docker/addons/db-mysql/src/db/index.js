@@ -12,7 +12,7 @@ function getPool() {
   // Fallbacks for testing (env should override)
   /*
   Variables are meant for Local use only
-  Real Projects should have these variables should be provided via .env
+  Real Projects should have these variables provided via .env
   */
   const host = process.env.DB_HOST || "mysql"; // docker-compose service name
   const port = Number(process.env.DB_PORT || "3306");
