@@ -148,6 +148,18 @@ def build_env_content(db_engine: str, use_docker: bool, stack_id: str) -> str:
             #lines.append("SQLITE_DB_PATH=./data/db.sqlite")
             #lines.append("")
 
+        # mysql for Express
+        elif db_engine == "mysql":
+            lines.append("# MySQL configuration (Express)")
+            host = "mysql" if use_docker else "localhost"
+            lines.append("DB_ENGINE=mysql")
+            lines.append(f"DB_HOST={host}")
+            lines.append("DB_PORT=3306")
+            lines.append("DB_NAME=app_db")
+            lines.append("DB_USER=app_user")
+            lines.append("DB_PASSWORD=app_password")
+            lines.append("")
+
         # mongo for Express
         elif db_engine == "mongo":
             lines.append("# MongoDB configuration (Express)")
