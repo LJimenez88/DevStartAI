@@ -147,14 +147,18 @@ def delete_item(item_id: int):
 # as long as it ships `app/db.py` and `app/routes_db_items.py`.
 try:
     from app import db as db_module
+    print("Imported app.db")
 
     if hasattr(db_module, "init_db"):
-        print("Running init_db() for DB addon...")
+        print("Running init_db()...")
         db_module.init_db()
-        print("Database tables initialized")
 
     from app.routes_db_items import router as db_items_router
-    app.include_router(db_items_router)
-    print("DB-backed routes mounted")
-except ImportError as e:
-    print(f"No DB addon found. Running with in-memory items only. ({e})")
+    print("Imported app.routes_db_items")
+
+    app.include_router(db_items_router, prefix="/db/items")
+    print("DB-backed routes mounted at /db/items")
+
+except Exception as e:
+    print("DB addon mount failed:", repr(e))
+

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from .db import Item as ItemModel
 from .db import get_db
 
-router = APIRouter(prefix="/db", tags=["db-items"])
+router = APIRouter(tags=["db-items"])
 
 class ItemBase(BaseModel):
     name: str
@@ -20,11 +20,11 @@ class Item(ItemBase):
     class Config:
         orm_mode = True
 
-@router.get("/items", response_model=List[Item])
+@router.get("/", response_model=List[Item])
 def list_items(db: Session = Depends(get_db)):
     return db.query(ItemModel).order_by(ItemModel.id.asc()).all()
 
-@router.post("/items", response_model=Item, status_code=201)
+@router.post("/", response_model=Item, status_code=201)
 def create_item(payload: ItemCreate, db: Session = Depends(get_db)):
     db_item = ItemModel(name=payload.name, description=payload.description)
     db.add(db_item)
@@ -32,14 +32,14 @@ def create_item(payload: ItemCreate, db: Session = Depends(get_db)):
     db.refresh(db_item)
     return db_item
 
-@router.get("/items/{item_id}", response_model=Item)
+@router.get("/{item_id}", response_model=Item)
 def get_item(item_id: int, db: Session = Depends(get_db)):
     item = db.query(ItemModel).filter(ItemModel.id == item_id).first()
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
 
-@router.delete("/items/{item_id}", status_code=204)
+@router.delete("/{item_id}", status_code=204)
 def delete_item(item_id: int, db: Session = Depends(get_db)):
     item = db.query(ItemModel).filter(ItemModel.id == item_id).first()
     if not item:
