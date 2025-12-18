@@ -114,8 +114,8 @@ function App() {
         projectName,
         stackId,
         includeDocker,
-        includeAuth,
-        includeCI,
+        includeAuth: AUTH_ENABLED ? includeAuth : false,
+        includeCI: CI_ENABLED ? includeCI : false,
         dbEngine, 
       };
 
@@ -155,6 +155,10 @@ function App() {
       setError("");
       setDownloadUrl("");
     };
+
+    //This ones is to disable until feat is ready
+    const AUTH_ENABLED = false;
+    const CI_ENABLED = false;
 
 
   // Simple UI
@@ -228,7 +232,10 @@ function App() {
               ))}
             </select>
           </div>
-          <div>
+          {/*This section was replaced so that once functional we can run this one instead
+            -There is a hardcoded variables in order to prevent users from clicking true to the checkmarks
+          */}
+          {/*<div>
             <p className="text-sm font-medium mb-1">Options</p>
             <div className="grid grid-cols-3 gap-2 text-xs">
               <label className="inline-flex items-center gap-1">
@@ -257,6 +264,70 @@ function App() {
                   className="h-3 w-3 rounded border-slate-500 bg-slate-900"
                 />
                 <span>CI config</span>
+              </label>
+            </div>
+          </div>*/}
+          <div>
+            <p className="text-sm font-medium mb-1">Options</p>
+
+            <div className="flex justify-between w-full gap-2 text-xs">
+              {/* Docker (enabled) */}
+              <label className="inline-flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={includeDocker}
+                  onChange={(e) => setIncludeDocker(e.target.checked)}
+                  className="h-3 w-3 rounded border-slate-500 bg-slate-900"
+                />
+                <span>Docker</span>
+              </label>
+
+              {/* Auth (disabled) */}
+              <label
+                className={`inline-flex items-center gap-2 ${
+                  AUTH_ENABLED ? "" : "opacity-50 cursor-not-allowed"
+                }`}
+                title={AUTH_ENABLED ? "" : "Coming soon"}
+              >
+                <input
+                  type="checkbox"
+                  checked={includeAuth}
+                  onChange={(e) => setIncludeAuth(e.target.checked)}
+                  disabled={!AUTH_ENABLED}
+                  className="h-3 w-3 rounded border-slate-500 bg-slate-900"
+                />
+                <span className="flex items-center gap-2">
+                  Auth stub
+                  {!AUTH_ENABLED && (
+                    <span className="rounded bg-slate-800 px-2 py-[2px] text-[10px] text-slate-300 border border-slate-700">
+                      Coming soon
+                    </span>
+                  )}
+                </span>
+              </label>
+
+              {/* CI (disabled) */}
+              <label
+                className={`inline-flex items-center gap-2 ${
+                  CI_ENABLED ? "" : "opacity-50 cursor-not-allowed"
+                }`}
+                title={CI_ENABLED ? "" : "Coming soon"}
+              >
+                <input
+                  type="checkbox"
+                  checked={includeCI}
+                  onChange={(e) => setIncludeCI(e.target.checked)}
+                  disabled={!CI_ENABLED}
+                  className="h-3 w-3 rounded border-slate-500 bg-slate-900"
+                />
+                <span className="flex items-center gap-2">
+                  CI config
+                  {!CI_ENABLED && (
+                    <span className="rounded bg-slate-800 px-2 py-[2px] text-[10px] text-slate-300 border border-slate-700">
+                      Coming soon
+                    </span>
+                  )}
+                </span>
               </label>
             </div>
           </div>
