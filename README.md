@@ -41,6 +41,16 @@ Each generated project includes:
 - Auto-generated environment variables
 - Ready-to-run configuration (no manual setup required)
 
+### Feature Maturity
+
+- **Docker support is fully implemented and production-ready**
+- **Auth and CI/CD options are currently stubs**
+  - Files may be generated
+  - No full authentication or pipeline logic is wired yet
+  - These options may appear disabled in the UI until finalized
+
+This behavior is intentional and documented for later versions
+
 ---
 
 ## Async vs Sync Design (FastAPI)
